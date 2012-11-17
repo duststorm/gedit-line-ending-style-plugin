@@ -439,7 +439,7 @@ class LineEndingStylePluginUI:
 			item.disconnect(activate_handler_id)
 			item.set_data(LineEndingStylePluginUI.ITEM_ACTIVATE_HANDLER_ID_KEY, None)
 
-		Gtk.HBox.remove(window.get_statusbar(), sb_combo)
+		Gtk.Container.remove(window.get_statusbar(), sb_combo)
 
 
 
