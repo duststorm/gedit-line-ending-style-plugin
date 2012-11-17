@@ -175,7 +175,7 @@ except:
 			self.menu = None
 
 		@classmethod
-		def __menu_position_func(cls, menu, push_in, weakcombo):
+		def __menu_position_func(cls, menu, weakcombo):
 			combo = weakcombo()
 			request, _ = menu.get_toplevel().get_preferred_size()
 
