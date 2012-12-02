@@ -237,8 +237,11 @@ except:
 			combo.button.set_active(False)
 
 		def do_changed(self, item):
-			text = item.get_data(GeditStatusComboBox.ITEM_TEXT_KEY)
-			if text != None:
+			try:
+				text = getattr(item, GeditStatusComboBox.ITEM_TEXT_KEY)
+			except AttributeError:
+				pass
+			else:
 				self.item.set_markup(text)
 				self.current_item = item
 
@@ -264,24 +267,30 @@ except:
 			self.set_item_text(item, text)
 
 			activate_handler_id = item.connect("activate", GeditStatusComboBox.__item_activate, weakself)
-			item.set_data(GeditStatusComboBox.ACTIVATE_HANDLER_ID_KEY, activate_handler_id)
+			setattr(item, GeditStatusComboBox.ACTIVATE_HANDLER_ID_KEY, activate_handler_id)
 
 		def remove_item(self, item):
-			activate_handler_id = item.get_data(GeditStatusComboBox.ACTIVATE_HANDLER_ID_KEY)
-			if activate_handler_id != None:
+			try:
+				activate_handler_id = getattr(item, GeditStatusComboBox.ACTIVATE_HANDLER_ID_KEY)
+			except AttributeError:
+				pass
+			else:
 				item.disconnect(activate_handler_id)
-			item.set_data(GeditStatusComboBox.ACTIVATE_HANDLER_ID_KEY, None)
-			item.set_data(GeditStatusComboBox.ITEM_TEXT_KEY, None)
+				delattr(item, GeditStatusComboBox.ACTIVATE_HANDLER_ID_KEY)
+			delattr(item, GeditStatusComboBox.ITEM_TEXT_KEY)
 			self.menu.remove(item)
 
 		def get_items(self):
 			return self.menu.get_children()
 
 		def get_item_text(self, item):
-			return item.get_data(GeditStatusComboBox.ITEM_TEXT_KEY)
+			try:
+				return getattr(item, GeditStatusComboBox.ITEM_TEXT_KEY)
+			except AttributeError:
+				return None
 
 		def set_item_text(self, item, text):
-			item.set_data(GeditStatusComboBox.ITEM_TEXT_KEY, text)
+			setattr(item, GeditStatusComboBox.ITEM_TEXT_KEY, text)
 
 		def set_item(self, item):
 			self.emit("changed", item)
@@ -326,7 +335,7 @@ class LineEndingStylePluginUI:
 		self.__disconnect_document(tab.get_document())
 
 	def __activate_item(self, item):
-		self.set_active_document_newline_type(item.get_data(LineEndingStylePluginUI.ITEM_VALUE_KEY))
+		self.set_active_document_newline_type(getattr(item, LineEndingStylePluginUI.ITEM_VALUE_KEY))
 
 	def merge(self):
 		action_group = self.action_group = Gtk.ActionGroup("GeditLineEndingStylePluginActions")
@@ -352,9 +361,9 @@ class LineEndingStylePluginUI:
 					None)
 			action_group.add_action(action)
 			item = action.create_menu_item()
-			item.set_data(LineEndingStylePluginUI.ITEM_VALUE_KEY, entry[3])
+			setattr(item, LineEndingStylePluginUI.ITEM_VALUE_KEY, entry[3])
 			activate_handler_id = item.connect("activate", self.__activate_item)
-			item.set_data(LineEndingStylePluginUI.ITEM_ACTIVATE_HANDLER_ID_KEY, activate_handler_id)
+			setattr(item, LineEndingStylePluginUI.ITEM_ACTIVATE_HANDLER_ID_KEY, activate_handler_id)
 			sb_combo.add_item(item, _(entry[4]))
 
 		sb_combo.show_all()
@@ -378,23 +387,29 @@ class LineEndingStylePluginUI:
 		"""Connects plugin-specific event handlers."""
 
 		notify_newline_type_handler_id = doc.connect("notify::newline-type", self.__notify_document_property)
-		doc.set_data(LineEndingStylePluginUI.NOTIFY_NEWLINE_TYPE_HANDLER_ID_KEY, notify_newline_type_handler_id)
+		setattr(doc, LineEndingStylePluginUI.NOTIFY_NEWLINE_TYPE_HANDLER_ID_KEY, notify_newline_type_handler_id)
 
 		notify_read_only_handler_id = doc.connect("notify::read-only", self.__notify_document_property)
-		doc.set_data(LineEndingStylePluginUI.NOTIFY_READ_ONLY_HANDLER_ID_KEY, notify_read_only_handler_id)
+		setattr(doc, LineEndingStylePluginUI.NOTIFY_READ_ONLY_HANDLER_ID_KEY, notify_read_only_handler_id)
 
 	def __disconnect_document(self, doc):
 		"""Disconnects plugin-specific event handlers."""
 
-		notify_read_only_handler_id = doc.get_data(LineEndingStylePluginUI.NOTIFY_READ_ONLY_HANDLER_ID_KEY)
-		if notify_read_only_handler_id != None:
+		try:
+			notify_read_only_handler_id = getattr(doc, LineEndingStylePluginUI.NOTIFY_READ_ONLY_HANDLER_ID_KEY)
+		except AttributeError:
+			pass
+		else:
 			doc.disconnect(notify_read_only_handler_id)
-		doc.set_data(LineEndingStylePluginUI.NOTIFY_READ_ONLY_HANDLER_ID_KEY, None)
+			delattr(doc, LineEndingStylePluginUI.NOTIFY_READ_ONLY_HANDLER_ID_KEY)
 
-		notify_newline_type_handler_id = doc.get_data(LineEndingStylePluginUI.NOTIFY_NEWLINE_TYPE_HANDLER_ID_KEY)
-		if notify_newline_type_handler_id != None:
+		try:
+			notify_newline_type_handler_id = getattr(doc, LineEndingStylePluginUI.NOTIFY_NEWLINE_TYPE_HANDLER_ID_KEY)
+		except AttributeError:
+			pass
+		else:
 			doc.disconnect(notify_newline_type_handler_id)
-		doc.set_data(LineEndingStylePluginUI.NOTIFY_NEWLINE_TYPE_HANDLER_ID_KEY, None)
+			delattr(doc, LineEndingStylePluginUI.NOTIFY_NEWLINE_TYPE_HANDLER_ID_KEY)
 
 	def __update_state_per_document(self, doc):
 		sb_combo = self.sb_combo
@@ -403,7 +418,7 @@ class LineEndingStylePluginUI:
 			nl_type = doc.get_property("newline-type")
 
 			for item in sb_combo.get_items():
-				if item.get_data(LineEndingStylePluginUI.ITEM_VALUE_KEY) == nl_type:
+				if getattr(item, LineEndingStylePluginUI.ITEM_VALUE_KEY) == nl_type:
 					sb_combo.set_item(item)
 					break
 
@@ -435,9 +450,13 @@ class LineEndingStylePluginUI:
 
 		sb_combo = self.sb_combo
 		for item in sb_combo.get_items():
-			activate_handler_id = item.get_data(LineEndingStylePluginUI.ITEM_ACTIVATE_HANDLER_ID_KEY)
-			item.disconnect(activate_handler_id)
-			item.set_data(LineEndingStylePluginUI.ITEM_ACTIVATE_HANDLER_ID_KEY, None)
+			try:
+				activate_handler_id = getattr(item, LineEndingStylePluginUI.ITEM_ACTIVATE_HANDLER_ID_KEY)
+			except AttributeError:
+				pass
+			else:
+				item.disconnect(activate_handler_id)
+				delattr(item, LineEndingStylePluginUI.ITEM_ACTIVATE_HANDLER_ID_KEY)
 
 		Gtk.Container.remove(window.get_statusbar(), sb_combo)
 
@@ -462,17 +481,25 @@ class LineEndingStylePlugin(GObject.Object, Gedit.WindowActivatable):
 		window = self.window
 		ui = LineEndingStylePluginUI(window)
 		ui.merge()
-		window.set_data(LineEndingStylePlugin.UI_KEY, ui)
+		setattr(window, LineEndingStylePlugin.UI_KEY, ui)
 
 	def do_deactivate(self):
 		window = self.window
-		ui = window.get_data(LineEndingStylePlugin.UI_KEY)
-		ui.unmerge()
-		window.set_data(LineEndingStylePlugin.UI_KEY, None)
+		try:
+			ui = getattr(window, LineEndingStylePlugin.UI_KEY)
+		except AttributeError:
+			pass
+		else:
+			ui.unmerge()
+			delattr(window, LineEndingStylePlugin.UI_KEY)
 
 	def do_update_state(self):
 		window = self.window
-		ui = window.get_data(LineEndingStylePlugin.UI_KEY)
-		ui.update_ui()
+		try:
+			ui = getattr(window, LineEndingStylePlugin.UI_KEY)
+		except AttributeError:
+			pass
+		else:
+			ui.update_ui()
 
 gettext.bindtextdomain("gedit-line-ending-style-plugin", "/usr/share/locale")
