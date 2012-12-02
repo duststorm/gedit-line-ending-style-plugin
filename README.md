@@ -6,8 +6,8 @@ This is a plugin for Gedit 3 that allows the line ending style of documents to b
 ## System-wide installation
 *You will need root privileges. Alternatively, you can install the plugin for only yourself using the instructions below, in the "Local installation" section.*
 
- *  Download the v0.1 sources. You can either save & extract GitHub's automatically-generated tarball [`v0.1.tar.gz`](https://github.com/dtrebbien/gedit-line-ending-style-plugin/tarball/v0.1) or clone the repository, verify my GPG signature of the `v0.1` tag, and check out `tags/v0.1`.
- *  In a terminal, `cd` into the directory containing the v0.1 sources.
+ *  Download the v0.2 sources. You can either save & extract GitHub's automatically-generated tarball [`v0.2.tar.gz`](https://github.com/dtrebbien/gedit-line-ending-style-plugin/archive/v0.2.tar.gz) or clone the repository, verify my GPG signature of the `v0.2` tag, and check out `tags/v0.2`.
+ *  In a terminal, `cd` into the directory containing the v0.2 sources.
  *  Configure the package. For most systems, the following configure line will work:
 
     <pre>
@@ -31,7 +31,7 @@ Local installation of the plugin is for when you don't have root access or you o
     <pre>
 mkdir --parents ~/.local/share/gedit/plugins
 </pre>
- 1. Save [`lineendingstyle.plugin`](https://github.com/dtrebbien/gedit-line-ending-style-plugin/raw/424920911e25875282d03a38c93c4e779ea04c25/src/lineendingstyle.plugin) and [`lineendingstyle.py`](https://github.com/dtrebbien/gedit-line-ending-style-plugin/raw/424920911e25875282d03a38c93c4e779ea04c25/src/lineendingstyle.py) to `~/.local/share/gedit/plugins`
+ 1. Save [`lineendingstyle.plugin`](https://raw.github.com/dtrebbien/gedit-line-ending-style-plugin/0181c1eb07e407a54d31e577aead119ad12bfe1b/src/lineendingstyle.plugin) and [`lineendingstyle.py`](https://raw.github.com/dtrebbien/gedit-line-ending-style-plugin/0181c1eb07e407a54d31e577aead119ad12bfe1b/src/lineendingstyle.py) to `~/.local/share/gedit/plugins`
  2. Re-start Gedit.
  3. From the Edit menu, select "Preferences".
  4. On the Plugins tab, scroll down to the entry for "Line Ending Style" and check the checkbox.
